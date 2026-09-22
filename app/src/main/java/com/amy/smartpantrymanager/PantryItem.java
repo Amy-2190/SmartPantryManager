@@ -1,5 +1,4 @@
 package com.amy.smartpantrymanager;
-
 public class PantryItem {
 
     private int id;
