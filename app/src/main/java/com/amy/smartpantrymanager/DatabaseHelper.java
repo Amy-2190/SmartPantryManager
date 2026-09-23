@@ -11,7 +11,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "smart_pantry.db";
     //Name of the database file sharedby the app
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     // Database version can be increased if the database structure changes
 
     public static final String TABLE_PANTRY = "pantry_items";
@@ -77,6 +77,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ")";
 
         db.execSQL(createRecipeIngredientsTable);
+
+        // Add the starter recipes after the tables have been created.
+
+        seedRecipes(db);
     }
 
     @Override
@@ -192,5 +196,98 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
 
         return rowsUpdated > 0;
+    }
+
+
+
+
+    // this adds the starting recipes to the database.
+    private void seedRecipes(SQLiteDatabase db) {
+
+        // Storing the recipe details.
+        ContentValues recipeValues = new ContentValues();
+        recipeValues.put(COLUMN_RECIPE_NAME, "Tomato Pasta");
+        recipeValues.put(
+                COLUMN_RECIPE_INSTRUCTIONS,
+                "Cook the pasta until tender. Chop the tomato and onion. "
+                        + "Heat the oil and cook the onion and tomato. "
+                        + "Add the cooked pasta and salt, then mix well."
+        );
+
+        // Insert the recipe and get its ID.
+        long recipeId = db.insert(TABLE_RECIPES, null, recipeValues);
+
+        // Add the ingredients needed for Tomato Pasta.
+        ContentValues ingredientValues = new ContentValues();
+
+        ingredientValues.put(COLUMN_RECIPE_ID_FK, recipeId);
+        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_NAME, "Pasta");
+        ingredientValues.put(COLUMN_RECIPE_REQUIRED_QUANTITY, 200);
+        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_UNIT, "g");
+        db.insert(TABLE_RECIPE_INGREDIENTS, null, ingredientValues);
+
+        ingredientValues.clear();
+        ingredientValues.put(COLUMN_RECIPE_ID_FK, recipeId);
+        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_NAME, "Tomato");
+        ingredientValues.put(COLUMN_RECIPE_REQUIRED_QUANTITY, 2);
+        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_UNIT, "item");
+        db.insert(TABLE_RECIPE_INGREDIENTS, null, ingredientValues);
+
+        ingredientValues.clear();
+        ingredientValues.put(COLUMN_RECIPE_ID_FK, recipeId);
+        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_NAME, "Onion");
+        ingredientValues.put(COLUMN_RECIPE_REQUIRED_QUANTITY, 1);
+        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_UNIT, "item");
+        db.insert(TABLE_RECIPE_INGREDIENTS, null, ingredientValues);
+
+        ingredientValues.clear();
+        ingredientValues.put(COLUMN_RECIPE_ID_FK, recipeId);
+        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_NAME, "Cooking oil");
+        ingredientValues.put(COLUMN_RECIPE_REQUIRED_QUANTITY, 10);
+        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_UNIT, "ml");
+        db.insert(TABLE_RECIPE_INGREDIENTS, null, ingredientValues);
+
+        ingredientValues.clear();
+        ingredientValues.put(COLUMN_RECIPE_ID_FK, recipeId);
+        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_NAME, "Salt");
+        ingredientValues.put(COLUMN_RECIPE_REQUIRED_QUANTITY, 2);
+        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_UNIT, "g");
+        db.insert(TABLE_RECIPE_INGREDIENTS, null, ingredientValues);
+    }
+
+
+
+    // Gets all recipes stored in the database.
+    public List<String> getAllRecipes() {
+
+        List<String> recipes = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Get all recipe names from the recipes table.
+        Cursor cursor = db.query(
+                TABLE_RECIPES,
+                new String[]{COLUMN_RECIPE_NAME},
+                null,
+                null,
+                null,
+                null,
+                COLUMN_RECIPE_NAME + " ASC"
+        );
+
+        // Move through each recipe returned by the database.
+        while (cursor.moveToNext()) {
+
+            String recipeName = cursor.getString(
+                    cursor.getColumnIndexOrThrow(COLUMN_RECIPE_NAME)
+            );
+
+            recipes.add(recipeName);
+        }
+
+        // Close the cursor after reading the results.
+        cursor.close();
+
+        return recipes;
     }
 }

@@ -31,6 +31,20 @@ public class MainActivity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(this);
         databaseHelper.getWritableDatabase();
 
+
+
+        List<String> recipes = databaseHelper.getAllRecipes();
+
+        if (!recipes.isEmpty()) {
+            Toast.makeText(
+                    this,
+                    "Recipe found: " + recipes.get(0),
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+
+
+
         Button buttonAddIngredient = findViewById(R.id.buttonAddIngredient);
         recyclerViewPantry = findViewById(R.id.recyclerViewPantry);
 
