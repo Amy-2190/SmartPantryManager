@@ -11,7 +11,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "smart_pantry.db";
     //Name of the database file sharedby the app
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     // Database version can be increased if the database structure changes
 
     public static final String TABLE_PANTRY = "pantry_items";
@@ -204,55 +204,301 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // this adds the starting recipes to the database.
     private void seedRecipes(SQLiteDatabase db) {
 
-        // Storing the recipe details.
-        ContentValues recipeValues = new ContentValues();
-        recipeValues.put(COLUMN_RECIPE_NAME, "Tomato Pasta");
-        recipeValues.put(
-                COLUMN_RECIPE_INSTRUCTIONS,
+        // Add the starter recipes to the database.
+        addRecipe(
+                db,
+                "Tomato Pasta",
                 "Cook the pasta until tender. Chop the tomato and onion. "
                         + "Heat the oil and cook the onion and tomato. "
-                        + "Add the cooked pasta and salt, then mix well."
+                        + "Add the cooked pasta and salt, then mix well.",
+                new String[]{"Pasta", "Tomato", "Onion", "Cooking oil", "Salt"},
+                new double[]{200, 2, 1, 10, 2},
+                new String[]{"g", "item", "item", "ml", "g"}
         );
 
-        // Insert the recipe and get its ID.
-        long recipeId = db.insert(TABLE_RECIPES, null, recipeValues);
 
-        // Add the ingredients needed for Tomato Pasta.
-        ContentValues ingredientValues = new ContentValues();
+        addRecipe(
+                db,
+                "Cheese Omelette",
+                "Beat the eggs with salt. Heat the oil in a pan and add the eggs. "
+                        + "Add the cheese, fold the omelette and cook until the egg is fully set.",
+                new String[]{"Egg", "Cheese", "Cooking oil", "Salt"},
+                new double[]{2, 50, 5, 1},
+                new String[]{"item", "g", "ml", "g"}
+        );
 
-        ingredientValues.put(COLUMN_RECIPE_ID_FK, recipeId);
-        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_NAME, "Pasta");
-        ingredientValues.put(COLUMN_RECIPE_REQUIRED_QUANTITY, 200);
-        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_UNIT, "g");
-        db.insert(TABLE_RECIPE_INGREDIENTS, null, ingredientValues);
 
-        ingredientValues.clear();
-        ingredientValues.put(COLUMN_RECIPE_ID_FK, recipeId);
-        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_NAME, "Tomato");
-        ingredientValues.put(COLUMN_RECIPE_REQUIRED_QUANTITY, 2);
-        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_UNIT, "item");
-        db.insert(TABLE_RECIPE_INGREDIENTS, null, ingredientValues);
+        addRecipe(
+                db,
+                "Vegetable Fried Rice",
+                "Cook the rice and allow it to cool slightly. Chop the carrot and onion. "
+                        + "Stir-fry the vegetables in oil, then add the rice, peas and salt. "
+                        + "Mix and cook until heated through.",
+                new String[]{"Rice", "Carrot", "Onion", "Peas", "Cooking oil", "Salt"},
+                new double[]{200, 1, 1, 50, 10, 2},
+                new String[]{"g", "item", "item", "g", "ml", "g"}
+        );
 
-        ingredientValues.clear();
-        ingredientValues.put(COLUMN_RECIPE_ID_FK, recipeId);
-        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_NAME, "Onion");
-        ingredientValues.put(COLUMN_RECIPE_REQUIRED_QUANTITY, 1);
-        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_UNIT, "item");
-        db.insert(TABLE_RECIPE_INGREDIENTS, null, ingredientValues);
 
-        ingredientValues.clear();
-        ingredientValues.put(COLUMN_RECIPE_ID_FK, recipeId);
-        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_NAME, "Cooking oil");
-        ingredientValues.put(COLUMN_RECIPE_REQUIRED_QUANTITY, 10);
-        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_UNIT, "ml");
-        db.insert(TABLE_RECIPE_INGREDIENTS, null, ingredientValues);
 
-        ingredientValues.clear();
-        ingredientValues.put(COLUMN_RECIPE_ID_FK, recipeId);
-        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_NAME, "Salt");
-        ingredientValues.put(COLUMN_RECIPE_REQUIRED_QUANTITY, 2);
-        ingredientValues.put(COLUMN_RECIPE_INGREDIENT_UNIT, "g");
-        db.insert(TABLE_RECIPE_INGREDIENTS, null, ingredientValues);
+        addRecipe(
+                db,
+                "Chicken Fried Rice",
+                "Cook the rice. Cook the chicken thoroughly in a pan. "
+                        + "Add onion and oil, then add the cooked rice and egg. "
+                        + "Stir until the egg is cooked and season with salt.",
+                new String[]{"Rice", "Chicken", "Egg", "Onion", "Cooking oil", "Salt"},
+                new double[]{200, 150, 1, 1, 10, 2},
+                new String[]{"g", "g", "item", "item", "ml", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Tuna Pasta",
+                "Cook the pasta until tender. Chop the tomato and onion. "
+                        + "Cook the onion and tomato in oil, then add the tuna and pasta. "
+                        + "Mix well and add salt.",
+                new String[]{"Pasta", "Tuna", "Tomato", "Onion", "Cooking oil", "Salt"},
+                new double[]{200, 1, 1, 1, 10, 2},
+                new String[]{"g", "item", "item", "item", "ml", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Egg Sandwich",
+                "Boil the eggs and allow them to cool. Mash the eggs with mayonnaise and salt. "
+                        + "Spread the mixture onto the bread and serve.",
+                new String[]{"Bread", "Egg", "Mayonnaise", "Salt"},
+                new double[]{2, 2, 20, 1},
+                new String[]{"item", "item", "g", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Grilled Cheese Sandwich",
+                "Butter the bread and place the cheese between the slices. "
+                        + "Toast in a pan until the bread is golden and the cheese has melted.",
+                new String[]{"Bread", "Cheese", "Butter"},
+                new double[]{2, 60, 10},
+                new String[]{"item", "g", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Tomato & Cheese Toast",
+                "Spread butter on the bread. Add sliced tomato and cheese, then season with salt. "
+                        + "Toast until the bread is golden and the cheese has melted.",
+                new String[]{"Bread", "Tomato", "Cheese", "Butter", "Salt"},
+                new double[]{2, 1, 50, 10, 1},
+                new String[]{"item", "item", "g", "g", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Chicken Pasta",
+                "Cook the pasta. Cook the chicken thoroughly in oil, then add the chopped onion "
+                        + "and tomato. Add the cooked pasta and salt and mix well.",
+                new String[]{"Pasta", "Chicken", "Tomato", "Onion", "Cooking oil", "Salt"},
+                new double[]{200, 150, 1, 1, 10, 2},
+                new String[]{"g", "g", "item", "item", "ml", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Vegetable Pasta",
+                "Cook the pasta. Chop the vegetables and cook them in oil. "
+                        + "Add the cooked pasta and salt, then mix until heated through.",
+                new String[]{"Pasta", "Carrot", "Tomato", "Onion", "Cooking oil", "Salt"},
+                new double[]{200, 1, 1, 1, 10, 2},
+                new String[]{"g", "item", "item", "item", "ml", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Potato Omelette",
+                "Peel and chop the potatoes and onion. Cook them in oil until tender. "
+                        + "Beat the eggs with salt, pour them over the vegetables and cook until the egg is set.",
+                new String[]{"Potato", "Egg", "Onion", "Cooking oil", "Salt"},
+                new double[]{2, 2, 1, 10, 2},
+                new String[]{"item", "item", "item", "ml", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Chicken & Rice",
+                "Cook the rice. Cook the chicken thoroughly in oil. "
+                        + "Add the chopped carrot and onion and cook until tender. Serve with the rice.",
+                new String[]{"Rice", "Chicken", "Carrot", "Onion", "Cooking oil", "Salt"},
+                new double[]{200, 150, 1, 1, 10, 2},
+                new String[]{"g", "g", "item", "item", "ml", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Tuna Sandwich",
+                "Mix the tuna with mayonnaise and salt. Add sliced tomato and spread the mixture onto the bread.",
+                new String[]{"Bread", "Tuna", "Mayonnaise", "Tomato", "Salt"},
+                new double[]{2, 1, 20, 1, 1},
+                new String[]{"item", "item", "g", "item", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Vegetable Stir-Fry",
+                "Chop the vegetables. Heat the oil in a pan and stir-fry the onion, carrot, peas and tomato. "
+                        + "Add salt and cook until the vegetables are tender.",
+                new String[]{"Carrot", "Onion", "Peas", "Tomato", "Cooking oil", "Salt"},
+                new double[]{1, 1, 50, 1, 10, 2},
+                new String[]{"item", "item", "g", "item", "ml", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Tomato Scrambled Eggs",
+                "Chop the tomato and onion. Cook them in oil until softened. "
+                        + "Beat the eggs with salt, add them to the pan and stir until cooked.",
+                new String[]{"Egg", "Tomato", "Onion", "Cooking oil", "Salt"},
+                new double[]{2, 1, 1, 5, 1},
+                new String[]{"item", "item", "item", "ml", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Chicken Sandwich",
+                "Cook the chicken thoroughly and slice it. Spread mayonnaise onto the bread "
+                        + "and add chicken and sliced tomato. Season with salt and serve.",
+                new String[]{"Bread", "Chicken", "Tomato", "Mayonnaise", "Salt"},
+                new double[]{2, 100, 1, 20, 1},
+                new String[]{"item", "g", "item", "g", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Garlic Butter Pasta",
+                "Cook the pasta until tender. Melt the butter in a pan and cook the chopped garlic. "
+                        + "Add the pasta and salt, then mix well.",
+                new String[]{"Pasta", "Butter", "Garlic", "Salt"},
+                new double[]{200, 20, 2, 2},
+                new String[]{"g", "g", "item", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Potato & Cheese Bake",
+                "Slice the potatoes and onion. Layer them in a baking dish with butter, cheese and salt. "
+                        + "Bake until the potatoes are tender and the cheese is melted.",
+                new String[]{"Potato", "Cheese", "Onion", "Butter", "Salt"},
+                new double[]{3, 80, 1, 15, 2},
+                new String[]{"item", "g", "item", "g", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Vegetable Omelette",
+                "Chop the vegetables and cook them briefly in oil. Beat the eggs with salt and pour them "
+                        + "over the vegetables. Add cheese and cook until the egg is set.",
+                new String[]{"Egg", "Carrot", "Tomato", "Onion", "Cheese", "Cooking oil", "Salt"},
+                new double[]{2, 1, 1, 1, 30, 5, 1},
+                new String[]{"item", "item", "item", "item", "g", "ml", "g"}
+        );
+
+
+
+        addRecipe(
+                db,
+                "Chicken & Vegetable Stir-Fry",
+                "Cut the chicken into small pieces and cook thoroughly in oil. "
+                        + "Add the chopped vegetables and stir-fry until tender. Add salt and serve.",
+                new String[]{"Chicken", "Carrot", "Onion", "Peas", "Cooking oil", "Salt"},
+                new double[]{150, 1, 1, 50, 10, 2},
+                new String[]{"g", "item", "item", "g", "ml", "g"}
+        );
+
+
+
+    }
+
+
+    // Adds one recipe and its ingredients to the database.
+    private void addRecipe(
+            SQLiteDatabase db,
+            String recipeName,
+            String instructions,
+            String[] ingredientNames,
+            double[] requiredQuantities,
+            String[] units) {
+
+        ContentValues recipeValues = new ContentValues();
+
+        recipeValues.put(COLUMN_RECIPE_NAME, recipeName);
+        recipeValues.put(COLUMN_RECIPE_INSTRUCTIONS, instructions);
+
+        long recipeId = db.insert(
+                TABLE_RECIPES,
+                null,
+                recipeValues
+        );
+
+        for (int i = 0; i < ingredientNames.length; i++) {
+
+            ContentValues ingredientValues = new ContentValues();
+
+            ingredientValues.put(
+                    COLUMN_RECIPE_ID_FK,
+                    recipeId
+            );
+
+            ingredientValues.put(
+                    COLUMN_RECIPE_INGREDIENT_NAME,
+                    ingredientNames[i]
+            );
+
+            ingredientValues.put(
+                    COLUMN_RECIPE_REQUIRED_QUANTITY,
+                    requiredQuantities[i]
+            );
+
+            ingredientValues.put(
+                    COLUMN_RECIPE_INGREDIENT_UNIT,
+                    units[i]
+            );
+
+            db.insert(
+                    TABLE_RECIPE_INGREDIENTS,
+                    null,
+                    ingredientValues
+            );
+        }
     }
 
 

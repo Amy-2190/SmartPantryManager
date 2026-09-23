@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         if (!recipes.isEmpty()) {
             Toast.makeText(
                     this,
-                    "Recipe found: " + recipes.get(0),
+                    "Recipes found: " + recipes.size(),
                     Toast.LENGTH_LONG
             ).show();
         }
