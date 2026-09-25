@@ -536,4 +536,189 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return recipes;
     }
+
+
+    // Gets all recipes with their ingredients from the database.
+    public List<Recipe> getAllRecipeDetails() {
+
+        List<Recipe> recipes = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor recipeCursor = db.query(
+                TABLE_RECIPES,
+                new String[]{
+                        COLUMN_RECIPE_ID,
+                        COLUMN_RECIPE_NAME,
+                        COLUMN_RECIPE_INSTRUCTIONS
+                },
+                null,
+                null,
+                null,
+                null,
+                COLUMN_RECIPE_NAME + " ASC"
+        );
+
+        while (recipeCursor.moveToNext()) {
+
+            int recipeId = recipeCursor.getInt(
+                    recipeCursor.getColumnIndexOrThrow(COLUMN_RECIPE_ID)
+            );
+
+            String recipeName = recipeCursor.getString(
+                    recipeCursor.getColumnIndexOrThrow(COLUMN_RECIPE_NAME)
+            );
+
+            String instructions = recipeCursor.getString(
+                    recipeCursor.getColumnIndexOrThrow(COLUMN_RECIPE_INSTRUCTIONS)
+            );
+
+            List<RecipeIngredient> ingredients = getRecipeIngredients(recipeId);
+
+            Recipe recipe = new Recipe(
+                    recipeId,
+                    recipeName,
+                    instructions,
+                    ingredients
+            );
+
+            recipes.add(recipe);
+        }
+
+        recipeCursor.close();
+
+        return recipes;
+    }
+
+
+    // Gets all ingredients belonging to one recipe.
+    private List<RecipeIngredient> getRecipeIngredients(int recipeId) {
+
+        List<RecipeIngredient> ingredients = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_RECIPE_INGREDIENTS,
+                new String[]{
+                        COLUMN_RECIPE_INGREDIENT_NAME,
+                        COLUMN_RECIPE_REQUIRED_QUANTITY,
+                        COLUMN_RECIPE_INGREDIENT_UNIT
+                },
+                COLUMN_RECIPE_ID_FK + " = ?",
+                new String[]{String.valueOf(recipeId)},
+                null,
+                null,
+                COLUMN_RECIPE_INGREDIENT_NAME + " ASC"
+        );
+
+        while (cursor.moveToNext()) {
+
+            String ingredientName = cursor.getString(
+                    cursor.getColumnIndexOrThrow(COLUMN_RECIPE_INGREDIENT_NAME)
+            );
+
+            double requiredQuantity = cursor.getDouble(
+                    cursor.getColumnIndexOrThrow(COLUMN_RECIPE_REQUIRED_QUANTITY)
+            );
+
+            String unit = cursor.getString(
+                    cursor.getColumnIndexOrThrow(COLUMN_RECIPE_INGREDIENT_UNIT)
+            );
+
+            RecipeIngredient ingredient = new RecipeIngredient(
+                    ingredientName,
+                    requiredQuantity,
+                    unit
+            );
+
+            ingredients.add(ingredient);
+        }
+
+        cursor.close();
+
+        return ingredients;
+    }
+
+
+
+    // Checks whether the pantry has enough of one recipe ingredient.
+    private boolean isIngredientAvailable(RecipeIngredient recipeIngredient) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_PANTRY,
+                new String[]{
+                        COLUMN_PANTRY_QUANTITY,
+                        COLUMN_PANTRY_UNIT
+                },
+                "LOWER(" + COLUMN_PANTRY_NAME + ") = LOWER(?)",
+                new String[]{recipeIngredient.getName()},
+                null,
+                null,
+                null
+        );
+
+        if (!cursor.moveToFirst()) {
+            cursor.close();
+            return false;
+        }
+
+        double pantryQuantity = cursor.getDouble(
+                cursor.getColumnIndexOrThrow(COLUMN_PANTRY_QUANTITY)
+        );
+
+        String pantryUnit = cursor.getString(
+                cursor.getColumnIndexOrThrow(COLUMN_PANTRY_UNIT)
+        );
+
+        cursor.close();
+
+        boolean sameUnit = pantryUnit.equalsIgnoreCase(
+                recipeIngredient.getUnit()
+        );
+
+        boolean enoughQuantity = pantryQuantity >=
+                recipeIngredient.getRequiredQuantity();
+
+        return sameUnit && enoughQuantity;
+    }
+
+
+
+    // Checks whether all ingredients for a recipe are available.
+    private boolean isRecipeAvailable(Recipe recipe) {
+
+        for (RecipeIngredient ingredient : recipe.getIngredients()) {
+
+            if (!isIngredientAvailable(ingredient)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+
+    // Gets all recipes that can be made with the current pantry items.
+    public List<Recipe> getAvailableRecipes() {
+
+        List<Recipe> availableRecipes = new ArrayList<>();
+
+        List<Recipe> allRecipes = getAllRecipeDetails();
+
+        for (Recipe recipe : allRecipes) {
+
+            if (isRecipeAvailable(recipe)) {
+                availableRecipes.add(recipe);
+            }
+        }
+
+        return availableRecipes;
+    }
+
+
+
 }

@@ -32,23 +32,37 @@ public class MainActivity extends AppCompatActivity {
         databaseHelper.getWritableDatabase();
 
 
-
-        List<String> recipes = databaseHelper.getAllRecipes();
-
-        if (!recipes.isEmpty()) {
-            Toast.makeText(
-                    this,
-                    "Recipes found: " + recipes.size(),
-                    Toast.LENGTH_LONG
-            ).show();
-        }
-
-
-
         Button buttonAddIngredient = findViewById(R.id.buttonAddIngredient);
         recyclerViewPantry = findViewById(R.id.recyclerViewPantry);
 
         recyclerViewPantry.setLayoutManager(new LinearLayoutManager(this));
+
+
+        Button buttonSuggestedRecipes = findViewById(R.id.buttonSuggestedRecipes);
+
+        Button buttonSettings = findViewById(R.id.buttonSettings);
+
+        buttonSuggestedRecipes.setOnClickListener(v -> {
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    SuggestedRecipesActivity.class
+            );
+            startActivity(intent);
+        });
+
+
+
+        buttonSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    SettingsActivity.class
+            );
+            startActivity(intent);
+        });
+
+
+
+
 
         buttonAddIngredient.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddIngredientActivity.class);
