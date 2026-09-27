@@ -12,6 +12,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.widget.TextView;
+import android.view.View;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
 
     private DatabaseHelper databaseHelper;
     private RecyclerView recyclerViewRecipes;
+    private TextView textViewNoRecipes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +44,9 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                     return insets;
                 }
         );
-
+      //Trying to set up the message shown when no recipes are found or matched.
         recyclerViewRecipes = findViewById(R.id.recyclerViewRecipes);
+        textViewNoRecipes = findViewById(R.id.textViewNoRecipes);
         recyclerViewRecipes.setLayoutManager(
                 new LinearLayoutManager(this)
         );
@@ -67,6 +71,10 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                     "No recipes available with your current pantry.",
                     Toast.LENGTH_LONG
             ).show();
+
+            textViewNoRecipes.setVisibility(View.VISIBLE);
+            recyclerViewRecipes.setVisibility(View.GONE);
+
         }
 
         RecipeAdapter recipeAdapter = new RecipeAdapter(
