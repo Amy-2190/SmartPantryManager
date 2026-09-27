@@ -3,6 +3,7 @@ package com.amy.smartpantrymanager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,6 +50,10 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(this);
 
         loadSuggestedRecipes();
+
+               Button buttonBack = findViewById(R.id.buttonBack);
+
+                         buttonBack.setOnClickListener(v -> finish());
     }
 
     private void loadSuggestedRecipes() {
